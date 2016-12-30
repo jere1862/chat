@@ -1,0 +1,40 @@
+extends layout
+
+block content
+  h1= title
+  ul(id='messages')
+
+  p Enter a bubble
+  form(
+    action="",
+    id="channelConnect"
+  )
+    input(
+      id="channelConnectName",
+      autocomplete="off",
+      placeholder="Bubble name"
+    )
+    button(id="createChannelBtn") Connect
+  p 
+  form(
+    action="",
+    id="chatForm"
+    )
+    input(
+      id="m",
+      autocomplete="off",
+      placeholder="Enter a message"
+    )
+    button send
+    p Create a bubble
+
+  form(
+    action="",
+    id="channelForm"
+    )
+    input(
+      id="channelName",
+      autocomplete="off",
+      placeholder="Bubble name"
+    )
+    button send
