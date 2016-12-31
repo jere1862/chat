@@ -2,6 +2,7 @@ extends layout
 
 block content
   h1= title
+  h2(id='roomName')
   ul(id='messages')
 
   p Enter a bubble
@@ -24,17 +25,5 @@ block content
       id="m",
       autocomplete="off",
       placeholder="Enter a message"
-    )
-    button send
-    p Create a bubble
-
-  form(
-    action="",
-    id="channelForm"
-    )
-    input(
-      id="channelName",
-      autocomplete="off",
-      placeholder="Bubble name"
     )
     button send

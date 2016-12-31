@@ -7,22 +7,18 @@ var people = {};
 
 module.exports = function(io){
   io.on('connection', function(socket){
-    socket.on('room connection', function(){
-      //Assign a random name
-      people[socket.id] = moniker.choose();
-      socket.sockets.emit('chat message', 'test');
-      //console.log(socket.id+' connected to '+socket.nsp.name+'.');
-  });
-
     socket.on('chat message', function(msg){
-      socket.sckets.emit('chat message', people[socket.id]+': '+msg);
+      io.sockets.in(msg.room).emit('chat message', people[socket.id]+': '+msg.message);
     });
 
     socket.on('room connection', function(channelName){
+      if(people[socket.id]==undefined){
+        //Assign a random name
+        people[socket.id] = moniker.choose();
+      }
       socket.join(channelName);
-      io.emit('chat message', 'test message');
-      //console.log(io.sockets.adapter.rooms[''+channelName]);
-      socket.in(channelName).emit('chat message', 'Joined room');
+      socket.emit('room connection', channelName);
+      io.sockets.in(channelName).emit('chat message', people[socket.id]+' joined '+channelName+'.');
     });
 
     socket.on('disconnect', function(){
