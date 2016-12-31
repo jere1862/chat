@@ -1,0 +1,23 @@
+.circle{
+  position: absolute;
+  left: 50px;
+  border-radius: 50%;
+  background-color: cornflowerblue; 
+  width: 100px;
+  height: 100px;
+  border: 3px solid #333;
+  display: block;
+  margin: 0px;
+}
+
+.bubbleText{
+  line-height: 50px;
+  position: relative;
+  text-align: center;
+  vertical-align: middle;
+}
+
+a {
+  text-decoration: none;
+  color: black;
+}

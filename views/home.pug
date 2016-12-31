@@ -1,0 +1,15 @@
+doctype html
+html
+  head
+    title= title
+    link(rel='stylesheet', href='/stylesheets/bubbles.css')
+    script(src="https://cdn.socket.io/socket.io-1.0.0.js")
+    script(src="http://code.jquery.com/jquery-1.11.1.js")
+    script(src="javascripts/bubbles.js")
+
+  body
+    block content
+      span 
+        button(id='btn') allo
+        button(id='btn2') tasse cercle
+      div(id="bubbleHolder")

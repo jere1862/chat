@@ -4,6 +4,7 @@ var app = require('./../app.js');
 var io = require('socket.io')(app);
 var moniker = require('moniker');
 var people = {};
+var bubbles = {};
 
 module.exports = function(io){
   io.on('connection', function(socket){
@@ -13,12 +14,17 @@ module.exports = function(io){
 
     socket.on('room connection', function(channelName){
       if(people[socket.id]==undefined){
-        //Assign a random name
+        // Assign a random name
         people[socket.id] = moniker.choose();
       }
       socket.join(channelName);
       socket.emit('room connection', channelName);
       io.sockets.in(channelName).emit('chat message', people[socket.id]+' joined '+channelName+'.');
+      if(bubbles[channelName] == undefined){
+        bubbles[channelName] = 1;
+      }else{
+        bubbles[channelName] += 1;
+      }
     });
 
     socket.on('disconnect', function(){
@@ -26,9 +32,15 @@ module.exports = function(io){
       delete people[socket.id];
     });
 
-    /* GET home page. */
+   /* Bubble homepage */
+
+   /* GET home page. */
     router.get('/', function(req, res, next) {
-      res.render('index', { title: 'Bubble'});
+      res.render('home', { bubbles: bubbles });
+    });
+
+    socket.on('update', function(){
+      socket.emit('update', 'testChannel');
     });
 
   });
