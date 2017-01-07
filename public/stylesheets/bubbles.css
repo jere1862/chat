@@ -1,13 +1,12 @@
 .circle{
-  position: absolute;
-  left: 50px;
   border-radius: 50%;
   background-color: cornflowerblue; 
   width: 100px;
   height: 100px;
+  margin: -100px;
+  margin-left: 200px;
   border: 3px solid #333;
-  display: block;
-  margin: 0px;
+  display: block
 }
 
 .bubbleText{
@@ -20,4 +19,14 @@
 a {
   text-decoration: none;
   color: black;
+}
+
+#bubbleHolder{
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	top: 50%;
+	left: 50%;
+	overflow: visible;
+	background: red;
 }
