@@ -4,18 +4,6 @@ block content
   h1= title
   h2(id='roomName')
   ul(id='messages')
-  div(class='circle')
-  p Enter a bubble
-  form(
-    action="",
-    id="channelConnect"
-  )
-    input(
-      id="channelConnectName",
-      autocomplete="off",
-      placeholder="Bubble name"
-    )
-    button(id="createChannelBtn") Connect
   p 
   form(
     action="",
@@ -26,4 +14,4 @@ block content
       autocomplete="off",
       placeholder="Enter a message"
     )
-    button send
+    button(id='sendBtn') send
