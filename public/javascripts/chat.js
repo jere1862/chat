@@ -8,6 +8,10 @@
       return false;
     });
 
+    $('#m').submit(function(){  
+      return false;
+    });
+
     socket.on('chat message', function(msg){
       $('#messages').append($('<li>').text(msg));
     });
