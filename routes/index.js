@@ -12,9 +12,7 @@ function person(name, room){
 }
 
 module.exports = function(io){
-
   io.on('connection', function(socket){
-
     socket.on('chat message', function(msg){
       if(people[socket.id]==undefined){
         connectToRoom(msg.room ,function(id){
@@ -76,10 +74,6 @@ module.exports = function(io){
    /* GET home page. */
     router.get('/', function(req, res, next) {
       res.render('home', { bubbles: bubbles });
-    });
-	
-    router.get('/test', function(req, res, next) {
-      res.render('index', {'title': 'test'})
     });
 
     router.get('/:roomname', function(req, res, next){

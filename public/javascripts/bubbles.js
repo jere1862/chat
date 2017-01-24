@@ -3,6 +3,7 @@ var placedBubbles = [];
 const CLOSE_IN_DISTANCE = 150;
 
 $(document).ready(function(){
+    socket.emit('update');
     socket.on('update', function(update){
         placedBubbles = [];
 		addBubbles(update);
@@ -11,7 +12,6 @@ $(document).ready(function(){
         }
         animate();
     });
-    socket.emit('update');
 });
 
 function bubbleFunct(name, x, y, radius){
@@ -32,7 +32,10 @@ function addBubbles(bubblesToAdd){
             console.log('Couldn\'t find a place for a bubble');
         }else{
             newBubbles[bubbleToAdd].position = position;
-            place(newBubbles[bubbleToAdd]);
+            // TODO: figure out why favicon gets added as a bubble
+            if(newBubbles[bubbleToAdd].name!=""&&newBubbles[bubbleToAdd].name!=undefined&&newBubbles[bubbleToAdd].name!="favicon.ico/"){     
+                place(newBubbles[bubbleToAdd]);
+            }
         }
     }
 }
@@ -73,7 +76,6 @@ function place(bubble){
 function bringBubblesTogether(){
      for(bubble in placedBubbles){
          console.log(placedBubbles);
-         if(bubble!==0){
             var xOrientation = 1;
             var yOrientation = 1;
             if(placedBubbles[bubble].position.x > placedBubbles[0].position.x){
@@ -88,17 +90,16 @@ function bringBubblesTogether(){
                 placedBubbles[bubble].nextPosition.x = newDistX;
                 placedBubbles[bubble].nextPosition.y = newDistY;
             }
-         }
      }
 }
 
 function animate(){
      for(bubbleToAnimate in placedBubbles){
-        if(bubbleToAnimate!=0){
-            var newX = placedBubbles[bubbleToAnimate].nextPosition.x -  placedBubbles[bubbleToAnimate].position.x;
-            var newY = placedBubbles[bubbleToAnimate].nextPosition.y - placedBubbles[bubbleToAnimate].position.y;
-            $('#'+placedBubbles[bubbleToAnimate].name).animate({"margin-top": "+="+newY, "margin-left": "+=" +newX}, 5000);
-        }
+        var newX = placedBubbles[bubbleToAnimate].nextPosition.x -  placedBubbles[bubbleToAnimate].position.x;
+        var newY = placedBubbles[bubbleToAnimate].nextPosition.y - placedBubbles[bubbleToAnimate].position.y;
+        var bubbleToAnimateId = '#'+placedBubbles[bubbleToAnimate].name;
+        console.log(bubbleToAnimateId);
+        $(bubbleToAnimateId).animate({"margin-top": "+="+newY, "margin-left": "+=" +newX}, 2000);
      }
      for(bubbleToAnimate in placedBubbles){
          console.log(placedBubbles[bubbleToAnimate]);
