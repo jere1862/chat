@@ -56,7 +56,7 @@ module.exports = function(io){
     });
 
     socket.on('disconnect', function(){
-      // Todo verifier que la room est leaved
+      // TODO: verify room is left
       if(people[socket.id] != undefined){
         console.log(people[socket.id].name+' disconnected.');
         for(bubble in bubbles){

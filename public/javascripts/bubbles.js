@@ -24,7 +24,7 @@ function bubbleFunct(name, x, y, radius){
 function addBubbles(bubblesToAdd){
     var newBubbles = {};
     for(bubbleToAdd in bubblesToAdd){
-        // TODO radius non constant
+        // TODO variable radius
         var newBubble = new bubbleFunct(bubblesToAdd[bubbleToAdd].name, 0, 0, 30);
         newBubbles[bubbleToAdd] = newBubble;
         var position = calculateNextPosition(30);
@@ -32,7 +32,7 @@ function addBubbles(bubblesToAdd){
             console.log('Couldn\'t find a place for a bubble');
         }else{
             newBubbles[bubbleToAdd].position = position;
-            // TODO: figure out why favicon gets added as a bubble
+            // TODO: Remove favicon as a bubble
             if(newBubbles[bubbleToAdd].name!=""&&newBubbles[bubbleToAdd].name!=undefined&&newBubbles[bubbleToAdd].name!="favicon.ico/"){     
                 place(newBubbles[bubbleToAdd]);
             }
@@ -41,12 +41,11 @@ function addBubbles(bubblesToAdd){
 }
 
 function calculateNextPosition(radius){
-    // On essaie 5 fois pour l'instant
     if(placedBubbles.length==0){
         return {'x': 600-radius, 'y': 400-radius}
     }
     for(var i = 0; i < 5; i++){
-        // Constantes pour l'instant, trouver un moyen de faire ça en pourcentage
+        // TODO: Convert to percentages
         var x = Math.random()*1200;
         var y = Math.random()*800;
         for(bubble in placedBubbles){
@@ -61,6 +60,7 @@ function calculateNextPosition(radius){
 }
 
 function place(bubble){
+    // TODO: Clean this up
     $("<style>")
     .prop("type", "text/css")
     .html("\
@@ -75,7 +75,6 @@ function place(bubble){
 
 function bringBubblesTogether(){
      for(bubble in placedBubbles){
-         console.log(placedBubbles);
             var xOrientation = 1;
             var yOrientation = 1;
             if(placedBubbles[bubble].position.x > placedBubbles[0].position.x){
@@ -98,16 +97,11 @@ function animate(){
         var newX = placedBubbles[bubbleToAnimate].nextPosition.x -  placedBubbles[bubbleToAnimate].position.x;
         var newY = placedBubbles[bubbleToAnimate].nextPosition.y - placedBubbles[bubbleToAnimate].position.y;
         var bubbleToAnimateId = '#'+placedBubbles[bubbleToAnimate].name;
-        console.log(bubbleToAnimateId);
         $(bubbleToAnimateId).animate({"margin-top": "+="+newY, "margin-left": "+=" +newX}, 2000);
-     }
-     for(bubbleToAnimate in placedBubbles){
-         console.log(placedBubbles[bubbleToAnimate]);
      }
 }
 
 function checkCollisions(positionToCheck){
-    //Regarder avec toutes les autres, il faudrait faire excepté la même
     for(placedBubble in placedBubbles){
         var distX = placedBubbles[bubble].nextPosition.x-positionToCheck.position.x;
         var distY = placedBubbles[bubble].nextPosition.y-positionToCheck.position.y;
