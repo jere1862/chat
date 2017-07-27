@@ -3,15 +3,17 @@ extends layout
 block content
   h1= title
   h2(id='roomName')
-  ul(id='messages')
-  p 
-  form(
-    action="",
-    id="chatForm"
-    )
-    input(
-      id="m",
-      autocomplete="off",
-      placeholder="Enter a message"
-    )
-    button(id='sendBtn') send
+  div(id='chat-panel' class='panel panel-default')
+    ul(id='messages')
+    p 
+    div(id='chatbox-wrapper')
+      form(
+        action="",
+        id="chatForm"
+        )
+        input(
+          id="m",
+          class='chatbox',
+          autocomplete="off",
+          placeholder="Enter a message"
+        )
