@@ -16,10 +16,18 @@ module.exports = function(io){
     socket.on('chat message', function(msg){
       if(people[socket.id]==undefined){
         connectToRoom(msg.room ,function(id){
-          io.sockets.in(msg.room).emit('chat message', people[id].name+': '+msg.message);
+          message = {
+            "name": people[id].name,
+            "msg": msg.message
+          }
+          io.sockets.in(msg.room).emit('chat message', message);
         });
       }else{
-        io.sockets.in(msg.room).emit('chat message', people[socket.id].name+': '+msg.message);
+        message = {
+          "name": people[socket.id].name,
+          "msg": msg.message
+        }
+        io.sockets.in(msg.room).emit('chat message', message);
       }
     });
 

@@ -9,11 +9,13 @@ block content
     div(id='chatbox-wrapper')
       form(
         action="",
-        id="chatForm"
+        id="chatForm",
+        class="form-group"
         )
         input(
           id="m",
-          class='chatbox',
+          class='chatbox form-control',
           autocomplete="off",
-          placeholder="Enter a message"
+          placeholder="Enter a message",
+          autofocus="autofocus"
         )
