@@ -43,7 +43,7 @@ module.exports = function(io){
           people[socket.id] = new person(moniker.choose(), channelName);
         }else{
           var oldRoom = people[socket.id].room;
-          bubbles[oldRoom].population--;
+          // bubbles[oldRoom].population--;
           people[socket.id].room = channelName;
         }
         socket.join(channelName);

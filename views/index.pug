@@ -2,11 +2,10 @@ extends layout
 
 block content
   h1= title
-  h2(id='roomName')
-  div(id='chat-panel' class='panel panel-default')
-    ul(id='messages')
-    p 
-    div(id='chatbox-wrapper')
+  div(id='chat-panel', class='panel panel-default')
+    div(id= 'message-holder', class= 'panel panel-body')
+      ul(id='messages')
+    div(id='chatbox-wrapper', class= 'panel panel-footer')
       form(
         action="",
         id="chatForm",
