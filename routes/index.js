@@ -3,6 +3,7 @@ var router = express.Router();
 var app = require('./../app.js');
 var io = require('socket.io')(app);
 var moniker = require('moniker');
+var RoomHandler = require('room');
 var people = {};
 var bubbles = {};
 
