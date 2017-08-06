@@ -4,6 +4,7 @@
   $(document).ready(function(){
     $('input[type=submit]').focus();
     $('#roomName').text(room);
+    socket.emit('chatroom-connection', room);
     $('#chatForm').submit(function(){  
       if($('#m').val()!=""){
         socket.emit('chat message', {'room': room, 'message': $('#m').val()});
@@ -29,7 +30,6 @@
     socket.on('room connection', function(channelName){
       room = channelName;
       $('#roomName').text(room);
-      console.log("aaaa")
     });
 
     $(`#test`).click(function(){

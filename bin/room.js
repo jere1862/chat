@@ -7,14 +7,22 @@ var RoomHandler = function(){
 }
 
 RoomHandler.prototype = {
-    createRoom: function(id, callback){
+    createRoom: function(id){
         var room = new Room(id);
         this.rooms.push(room);
-        console.log("inCreateRoom");
         return room;
     },
     getRoom: function(id, callback){
         findRoomById(this.rooms, id, callback);
+    },
+    getOrCreateRoom: function(id, callback){
+       var self = this;
+       self.getRoom(id, function(room){
+           if(room == undefined){
+              return callback(self.createRoom(id));
+           }
+           return callback(room);
+       });
     },
     deleteRoom: function(id, callback){
         var self = this;
