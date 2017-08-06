@@ -25,7 +25,7 @@ function addBubbles(bubblesToAdd){
     var newBubbles = {};
     for(bubbleToAdd in bubblesToAdd){
         // TODO variable radius
-        var newBubble = new bubbleFunct(bubblesToAdd[bubbleToAdd].name, 0, 0, 30);
+        var newBubble = new bubbleFunct(bubblesToAdd[bubbleToAdd].id, 0, 0, 30);
         newBubbles[bubbleToAdd] = newBubble;
         var position = calculateNextPosition(30);
         if(position == -1){
