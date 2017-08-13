@@ -1,8 +1,8 @@
 html, body {
-   margin: 0;
-   padding: 0;
-   overflow: hidden;
-	 background-color: #ffccd7;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #ffccd7;
 }
 
 .unselectable {
@@ -20,4 +20,8 @@ svg {
    bottom:0; 
    left:0; 
    right:0
+}
+
+tspan{
+    alignment-baseline: middle;
 }

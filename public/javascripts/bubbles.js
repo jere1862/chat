@@ -83,9 +83,20 @@ $(document).ready(function(){
         .selectAll("tspan")
         .data(function(d) { return d.id.split(/(?=[A-Z][^A-Z])/g); })
         .enter().append("tspan")
+        .text(function(d) { return d })
         .attr("x", 0)
-        .attr("y", function(d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 10; })
-        .text(function(d) { return "otherTest"; })
+        .attr("y", 0)
+        .style("font-size", "1px")
         .attr("class", "unselectable")
-        .attr("cursor", "default");
+        .each(getSize)
+        .style("font-size", function() { return this.scale + "px"; })
+        .attr("y", function(d, i, nodes){ return 0;})
+        //.attr("y", function(d, i, nodes) { return 20 + (i - nodes.length / 2 - 0.5) * 10; });
 });
+
+function getSize(){
+    var boundingBox = this.getBBox(),
+    circleBoundingBox = this.parentNode.parentNode.getBBox(),
+    scale = Math.min(circleBoundingBox.width / boundingBox.width, circleBoundingBox.height / boundingBox.height);
+    this.scale = scale;
+}
