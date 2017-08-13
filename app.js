@@ -14,7 +14,6 @@ var index = require('./routes/index')(io);
 var users = require('./routes/users')(io);
 var rooms = require('./routes/rooms');
 
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -31,13 +30,19 @@ app.use('/', index);
 app.use('/users', users);
 app.use('/rooms', rooms);
 
+app.get('/', function(req, res, next){
+  res.render("home")
+});
+
+app.get('/:roomname', function(req, res, next){
+  res.render('index', {'title': req.params.roomname});
+});
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   var err = new Error('Not Found');
-  res.render('home')
-  //err.status = 404;
-  
-  //next(err);
+  err.status = 404;
+  next(err);
 });
 
 // error handler

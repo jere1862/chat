@@ -1,115 +1,97 @@
-var socket = io();
-var placedBubbles = [];
-const CLOSE_IN_DISTANCE = 150;
-
 $(document).ready(function(){
-    socket.emit('update');
-    socket.on('update', function(update){
-        placedBubbles = [];
-		addBubbles(update);
-        for(var i = 0; i < 10; i++){
-            bringBubblesTogether();
-        }
-        animate();
+
+    var socket = io();
+    const MAX_BUBBLE_RADIUS = 100;
+
+    var bubblesHierarchy = {
+        "name": "default",
+        "children": [
+        ]
+    }
+
+    window.onresize = function(){
+        var svg = d3.select("svg");
+        svg.remove();
+        drawSvg();
+    };
+
+    socket.emit("bubblesUpdate");
+
+    socket.on("bubblesUpdate", function(res){
+        var bubbles = [];
+        res.forEach(function(bubble){
+            bubbles.push({
+                "name": bubble.id,
+                "value": bubble.users.length
+            });
+        });
+        bubblesHierarchy.children = bubbles;
+        drawSvg()
     });
+
+    function drawSvg(){
+        if(bubblesHierarchy.children.length==0) return;
+        var svg = d3.selectAll("body").append("svg")
+            .attr("width", window.innerWidth)
+            .attr("height", window.innerHeight)
+            .attr("font-family", "sans-serif")
+            .attr("font-size", "10")
+            .attr("text-anchor", "middle");
+
+        width = +svg.attr("width"),
+        height = +svg.attr("height");
+
+        var pack = d3.pack()
+            .size([width, height]);
+        var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+        var root = d3.hierarchy(bubblesHierarchy)
+            .sum(function(d) { return d.value; })
+            .each(function(d) {
+                d.id = d.data.name;
+            });
+
+        var node = svg.selectAll(".node")
+            .data(pack(root).leaves())
+            .enter().append("a")
+                .attr("class", "node")
+                .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+                .attr("href", function(d){return d.id});
+        
+        node.append("circle")
+            .attr("id", function(d) { return d.name;})
+            .attr("r", function(d) {
+                 if(d.r > MAX_BUBBLE_RADIUS){
+                    return MAX_BUBBLE_RADIUS;
+                 }
+                 return d.r;
+             })
+            .style("fill", function(d) { return color(d.value); })
+            .style("stroke", "black")
+            .style("stroke-width", "2px")
+
+        node.append("clipPath")
+            .attr("id", function(d) { return "clip-" + d.id; })
+            .append("use")
+            .attr("xlink:href", function(d) { return "#" + d.id; }); 
+
+        node.append("text")
+            .selectAll("tspan")
+                .data(function(d) {return d.id.split(/(?=[A-Z][^A-Z])/g); })
+                .enter().append("tspan")
+                    .text(function(d) { return d })
+                    .attr("x", 0)
+                    .attr("y", 0)
+                    .style("font-size", "1px")
+                    .attr("class", "unselectable")
+                    .each(getSize)
+                    .style("font-size", function() { return this.scale + "px"; })
+        }
 });
 
-function bubbleFunct(name, x, y, radius){
-    this.name = name;
-	this.position = {'x': x, 'y': y};
-    this.nextPosition = {'x': x, 'y': y};
-	this.radius = radius;
-}
-
-function addBubbles(bubblesToAdd){
-    var newBubbles = {};
-    for(bubbleToAdd in bubblesToAdd){
-        // TODO variable radius
-        var newBubble = new bubbleFunct(bubblesToAdd[bubbleToAdd].id, 0, 0, 30);
-        newBubbles[bubbleToAdd] = newBubble;
-        var position = calculateNextPosition(30);
-        if(position == -1){
-            console.log('Couldn\'t find a place for a bubble');
-        }else{
-            newBubbles[bubbleToAdd].position = position;
-            // TODO: Remove favicon as a bubble
-            if(newBubbles[bubbleToAdd].name!=""&&newBubbles[bubbleToAdd].name!=undefined&&newBubbles[bubbleToAdd].name!="favicon.ico/"){     
-                place(newBubbles[bubbleToAdd]);
-            }
-        }
-    }
-}
-
-function calculateNextPosition(radius){
-    if(placedBubbles.length==0){
-        return {'x': 600-radius, 'y': 400-radius}
-    }
-    for(var i = 0; i < 5; i++){
-        // TODO: Convert to percentages
-        var x = Math.random()*1200;
-        var y = Math.random()*800;
-        for(bubble in placedBubbles){
-            var distX = placedBubbles[bubble].position.x-x;
-            var distY = placedBubbles[bubble].position.y-y;
-            if(Math.abs(distX) >= (placedBubbles[bubble].radius + radius) && Math.abs(distY) >= (placedBubbles[bubble].radius+radius)){
-                return {'x':x, 'y':y};
-            }
-        }
-    }
-    return -1;
-}
-
-function place(bubble){
-    // TODO: Clean this up
-    $("<style>")
-    .prop("type", "text/css")
-    .html("\
-    #"+bubble.name+" {\
-        margin-top:"+bubble.position.y+"px;\
-        margin-left:"+bubble.position.x+"px;\
-    }")
-    .appendTo("head");
-	$('#bubbleHolder').append('<a href=/'+bubble.name+' class="circle" id="'+bubble.name+'"><p class="bubbleText">'+bubble.name+'/</p></a>');
-    placedBubbles.push(bubble);
-}
-
-function bringBubblesTogether(){
-     for(bubble in placedBubbles){
-            var xOrientation = 1;
-            var yOrientation = 1;
-            if(placedBubbles[bubble].position.x > placedBubbles[0].position.x){
-                xOrientation = -1;
-            }
-            if(placedBubbles[bubble].position.y > placedBubbles[0].position.y){
-                yOrientation = -1;
-            }
-            var newDistX = placedBubbles[bubble].position.x + (xOrientation*CLOSE_IN_DISTANCE);
-            var newDistY = placedBubbles[bubble].position.y + (yOrientation*CLOSE_IN_DISTANCE);
-            if(!checkCollisions(placedBubbles[bubble])){
-                placedBubbles[bubble].nextPosition.x = newDistX;
-                placedBubbles[bubble].nextPosition.y = newDistY;
-            }
-     }
-}
-
-function animate(){
-     for(bubbleToAnimate in placedBubbles){
-        var newX = placedBubbles[bubbleToAnimate].nextPosition.x -  placedBubbles[bubbleToAnimate].position.x;
-        var newY = placedBubbles[bubbleToAnimate].nextPosition.y - placedBubbles[bubbleToAnimate].position.y;
-        var bubbleToAnimateId = '#'+placedBubbles[bubbleToAnimate].name;
-        $(bubbleToAnimateId).animate({"margin-top": "+="+newY, "margin-left": "+=" +newX}, 2000);
-     }
-}
-
-function checkCollisions(positionToCheck){
-    for(placedBubble in placedBubbles){
-        var distX = placedBubbles[bubble].nextPosition.x-positionToCheck.position.x;
-        var distY = placedBubbles[bubble].nextPosition.y-positionToCheck.position.y;
-        console.log(distX);
-        var radius = positionToCheck.radius;
-         if(Math.abs(distX) < (placedBubbles[placedBubble].radius + radius) && Math.abs(distY) < (placedBubbles[placedBubble].radius+radius)){
-            return true;
-        }
-    return false;
-    }
+function getSize(){
+    var boundingBox = this.getBBox(),
+    circleBoundingBox = this.parentNode.parentNode.getBBox(),
+    scale = Math.min(circleBoundingBox.width / boundingBox.width, circleBoundingBox.height / boundingBox.height);
+    this.scale = scale;
 }

@@ -24,7 +24,7 @@ module.exports = function(io){
           "name": people[socket.id].name,
           "msg": msg.message
         }
-        io.sockets.in(msg.room).emit('chat message', message);
+        io.sockets.in(msg.room  ).emit('chat message', message);
     });
   
     function connectToRoom(channelName, callback){
@@ -39,6 +39,7 @@ module.exports = function(io){
       io.sockets.in(channelName).emit('chat message', people[socket.id].name+' joined.');
 
       roomHandler.getOrCreateRoom(channelName, function(room){
+        console.log("getOrCreatRoom with id "+channelName)
         room.addUser(people[socket.id]);
       });
       
@@ -63,21 +64,11 @@ module.exports = function(io){
       }*/
     });
 
-   /* Bubble homepage */
-
-   /* GET home page. */
-    router.get('/', function(req, res, next) {
-      res.render('home', { bubbles: roomHandler.rooms });
+    socket.on('bubblesUpdate', function(){
+      socket.emit('bubblesUpdate', roomHandler.rooms );
     });
 
-    router.get('/:roomname', function(req, res, next){
-      res.render('index', {'title': req.params.roomname}, 
-      connectToRoom(req.params.roomname, function(){}));
-    });
-
-    socket.on('update', function(){
-      socket.emit('update', roomHandler.rooms );
-    });
   });
+
   return router;
 }
