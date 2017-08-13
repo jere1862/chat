@@ -1,0 +1,24 @@
+{
+  "name": "bubble",
+  "description": "",
+  "main": "bubbles.js",
+  "authors": [
+    "Jeremie Roy <j-roy95@hotmail.com>"
+  ],
+  "license": "MIT",
+  "homepage": "https://github.com/jere1862/chat",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.2.1",
+    "bootstrap": "^3.3.7",
+    "socket.io": "1.0.0",
+    "d3": "^4.10.0"
+  }
+}

@@ -1,115 +1,91 @@
-var socket = io();
-var placedBubbles = [];
-const CLOSE_IN_DISTANCE = 150;
-
 $(document).ready(function(){
-    socket.emit('update');
-    socket.on('update', function(update){
-        placedBubbles = [];
-		addBubbles(update);
-        for(var i = 0; i < 10; i++){
-            bringBubblesTogether();
-        }
-        animate();
-    });
+    var svg = d3.select("svg"),
+        width = +svg.attr("width"),
+        height = +svg.attr("height");
+
+    var pack = d3.pack()
+        .size([width, height])
+        .padding(1.5);
+
+    var format = d3.format(",d");
+
+    var color = d3.scaleOrdinal(d3.schemeCategory20);
+
+    var hierarchy = {
+        "name": "Eve",
+        "value": 12,
+        "children": [
+            {
+            "name": "Cain",
+            "value": 20,
+            },
+            {
+            "name": "Seth",
+            "value": 100,
+            "children": [
+                {
+                "name": "Enos",
+                "value": 15
+                },
+                {
+                "name": "Noam",
+                "value": 150
+                }
+            ]
+            },
+            {
+            "name": "Abel",
+            "value": 4
+            },
+            {
+            "name": "Awan",
+            "value": 24,
+            "children": [
+                {
+                "name": "Enoch",
+                "value": 4
+                }
+            ]
+            },
+            {
+            "name": "Azura",
+            "value": 16
+            }
+        ]
+    };
+
+    var root = d3.hierarchy(hierarchy)
+        .sum(function(d) { return d.value; })
+        .each(function(d) {
+            d.id = d.data.name;
+        });
+
+    var node = svg.selectAll(".node")
+        .data(pack(root).leaves())
+        .enter().append("a")
+            .attr("class", "node")
+            .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
+            .attr("href", "#")
+    
+    node.append("circle")
+        .attr("id", function(d) { return d.name;})
+        .attr("r", function(d) { return d.r;})
+        .style("fill", function(d) { return color(d.value); })
+        .style("stroke", "black")
+        .style("stroke-width", "2px")
+
+    node.append("clipPath")
+        .attr("id", function(d) { return "clip-" + d.id; })
+        .append("use")
+        .attr("xlink:href", function(d) { return "#" + d.id; }); 
+
+    node.append("text")
+        .selectAll("tspan")
+        .data(function(d) { return d.id.split(/(?=[A-Z][^A-Z])/g); })
+        .enter().append("tspan")
+        .attr("x", 0)
+        .attr("y", function(d, i, nodes) { return 13 + (i - nodes.length / 2 - 0.5) * 10; })
+        .text(function(d) { return "otherTest"; })
+        .attr("class", "unselectable")
+        .attr("cursor", "default");
 });
-
-function bubbleFunct(name, x, y, radius){
-    this.name = name;
-	this.position = {'x': x, 'y': y};
-    this.nextPosition = {'x': x, 'y': y};
-	this.radius = radius;
-}
-
-function addBubbles(bubblesToAdd){
-    var newBubbles = {};
-    for(bubbleToAdd in bubblesToAdd){
-        // TODO variable radius
-        var newBubble = new bubbleFunct(bubblesToAdd[bubbleToAdd].id, 0, 0, 30);
-        newBubbles[bubbleToAdd] = newBubble;
-        var position = calculateNextPosition(30);
-        if(position == -1){
-            console.log('Couldn\'t find a place for a bubble');
-        }else{
-            newBubbles[bubbleToAdd].position = position;
-            // TODO: Remove favicon as a bubble
-            if(newBubbles[bubbleToAdd].name!=""&&newBubbles[bubbleToAdd].name!=undefined&&newBubbles[bubbleToAdd].name!="favicon.ico/"){     
-                place(newBubbles[bubbleToAdd]);
-            }
-        }
-    }
-}
-
-function calculateNextPosition(radius){
-    if(placedBubbles.length==0){
-        return {'x': 600-radius, 'y': 400-radius}
-    }
-    for(var i = 0; i < 5; i++){
-        // TODO: Convert to percentages
-        var x = Math.random()*1200;
-        var y = Math.random()*800;
-        for(bubble in placedBubbles){
-            var distX = placedBubbles[bubble].position.x-x;
-            var distY = placedBubbles[bubble].position.y-y;
-            if(Math.abs(distX) >= (placedBubbles[bubble].radius + radius) && Math.abs(distY) >= (placedBubbles[bubble].radius+radius)){
-                return {'x':x, 'y':y};
-            }
-        }
-    }
-    return -1;
-}
-
-function place(bubble){
-    // TODO: Clean this up
-    $("<style>")
-    .prop("type", "text/css")
-    .html("\
-    #"+bubble.name+" {\
-        margin-top:"+bubble.position.y+"px;\
-        margin-left:"+bubble.position.x+"px;\
-    }")
-    .appendTo("head");
-	$('#bubbleHolder').append('<a href=/'+bubble.name+' class="circle" id="'+bubble.name+'"><p class="bubbleText">'+bubble.name+'/</p></a>');
-    placedBubbles.push(bubble);
-}
-
-function bringBubblesTogether(){
-     for(bubble in placedBubbles){
-            var xOrientation = 1;
-            var yOrientation = 1;
-            if(placedBubbles[bubble].position.x > placedBubbles[0].position.x){
-                xOrientation = -1;
-            }
-            if(placedBubbles[bubble].position.y > placedBubbles[0].position.y){
-                yOrientation = -1;
-            }
-            var newDistX = placedBubbles[bubble].position.x + (xOrientation*CLOSE_IN_DISTANCE);
-            var newDistY = placedBubbles[bubble].position.y + (yOrientation*CLOSE_IN_DISTANCE);
-            if(!checkCollisions(placedBubbles[bubble])){
-                placedBubbles[bubble].nextPosition.x = newDistX;
-                placedBubbles[bubble].nextPosition.y = newDistY;
-            }
-     }
-}
-
-function animate(){
-     for(bubbleToAnimate in placedBubbles){
-        var newX = placedBubbles[bubbleToAnimate].nextPosition.x -  placedBubbles[bubbleToAnimate].position.x;
-        var newY = placedBubbles[bubbleToAnimate].nextPosition.y - placedBubbles[bubbleToAnimate].position.y;
-        var bubbleToAnimateId = '#'+placedBubbles[bubbleToAnimate].name;
-        $(bubbleToAnimateId).animate({"margin-top": "+="+newY, "margin-left": "+=" +newX}, 2000);
-     }
-}
-
-function checkCollisions(positionToCheck){
-    for(placedBubble in placedBubbles){
-        var distX = placedBubbles[bubble].nextPosition.x-positionToCheck.position.x;
-        var distY = placedBubbles[bubble].nextPosition.y-positionToCheck.position.y;
-        console.log(distX);
-        var radius = positionToCheck.radius;
-         if(Math.abs(distX) < (placedBubbles[placedBubble].radius + radius) && Math.abs(distY) < (placedBubbles[placedBubble].radius+radius)){
-            return true;
-        }
-    return false;
-    }
-}
