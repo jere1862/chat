@@ -1,12 +1,12 @@
 doctype html
 html
   head
-    title= title
     link(rel='stylesheet', href='/stylesheets/bubbles.css')
     script(src="https://cdn.socket.io/socket.io-1.0.0.js")
     script(src="bower_components/jquery/dist/jquery.min.js")
     script(src="bower_components/d3/d3.min.js")
+    script.
+      var bubbles="#{bubbles}";
     script(src="javascripts/bubbles.js")
 
   body
-      svg(width = '1200', height = '800', font-family="sans-serif" font-size="10" text-anchor="middle")
