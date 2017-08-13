@@ -1,6 +1,9 @@
 {
   "name": "bubble",
-  "version": "0.0.0",
+  "version": "0.0.1",
+  "engines": {
+    "npm": "5.3.x"
+  },
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
@@ -8,6 +11,7 @@
   },
   "dependencies": {
     "body-parser": "~1.15.2",
+    "bower": "^1.8.0",
     "chai": "^4.1.1",
     "cookie-parser": "~1.4.3",
     "debug": "~2.2.0",

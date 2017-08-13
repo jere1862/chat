@@ -39,7 +39,6 @@ module.exports = function(io){
       io.sockets.in(channelName).emit('chat message', people[socket.id].name+' joined.');
 
       roomHandler.getOrCreateRoom(channelName, function(room){
-        console.log("getOrCreatRoom with id "+channelName)
         room.addUser(people[socket.id]);
       });
       
