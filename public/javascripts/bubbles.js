@@ -25,6 +25,11 @@ $(document).ready(function(){
                 "value": bubble.users.length
             });
         });
+        bubbles.push({
+            "name": "Create bubble",
+            "createBubble": true,
+            "value": 1
+        });
         bubblesHierarchy.children = bubbles;
         drawSvg()
     });
@@ -56,8 +61,14 @@ $(document).ready(function(){
             .enter().append("a")
                 .attr("class", "node")
                 .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; })
-                .attr("href", function(d){return d.id});
-        
+                .attr("href", function(d){
+                    if(d.data.createBubble === true){
+                        return undefined;
+                    }
+                    return d.id;
+                })
+                .attr("cursor", "pointer");
+
         node.append("circle")
             .attr("id", function(d) { return d.name;})
             .attr("r", function(d) {
@@ -66,10 +77,18 @@ $(document).ready(function(){
                  }
                  return d.r;
              })
-            .style("fill", function(d) { return color(d.value); })
+            .style("fill", function(d) {
+                return color(d.value); 
+            })
+            .attr("class", function(d) {
+                if(d.data.createBubble === true){
+                    return "create-bubble";
+                }
+                return undefined;
+            })
             .style("stroke", "black")
-            .style("stroke-width", "2px")
-
+            .style("stroke-width", "3px");
+        
         node.append("clipPath")
             .attr("id", function(d) { return "clip-" + d.id; })
             .append("use")
@@ -86,6 +105,31 @@ $(document).ready(function(){
                     .attr("class", "unselectable")
                     .each(getSize)
                     .style("font-size", function() { return this.scale + "px"; })
+
+        var createBubbleButton = d3.select(".create-bubble")
+            .attr("stroke-dasharray", "10,10")
+            .attr("href", "#")
+            .on("click", function(){
+                var test = $('<input class="form-control" placeholder="Enter a bubble name..."></input>');
+                BootstrapDialog.show({
+                    title: 'Create a bubble',
+                    id: "create-bubble-modal",
+                    message:  test,
+                    onshown: function(dialogRef){
+                        var input = $("input.form-control"); 
+                        input.focus();
+                        console.log(input);
+                        input.keypress(function(e){
+                            if(e.which == 13){
+                                window.location.href = "/"+input.val();
+                                return false;
+                            }
+                        });  
+                    }
+                });
+            });
+
+  
         }
 });
 
