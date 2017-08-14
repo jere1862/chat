@@ -61,7 +61,7 @@ $(document).ready(function(){
         node.append("circle")
             .attr("id", function(d) { return d.name;})
             .attr("r", function(d) {
-                 if(d.r > MAX_BUBBLE_RADIUS){
+                 if(d.r > MAX_BUBBLE_RADIUS && bubblesHierarchy.children.length == 1){
                     return MAX_BUBBLE_RADIUS;
                  }
                  return d.r;
