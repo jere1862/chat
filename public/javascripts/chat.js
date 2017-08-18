@@ -3,6 +3,9 @@
 
   //TODO: Align client name to the right for now 
   $(document).ready(function(){
+    document.body.style.overflow = 'hidden';
+    //$('#message-holder').style.overflow = 'hidden';
+
     $('input[type=submit]').focus();
     $('#roomName').text(roomName);
 
@@ -26,7 +29,15 @@
       $('#messages').append($('<br>'))
 
      var messageHolder = document.getElementById("message-holder");
-     messageHolder.scrollTop = messageHolder.scrollHeight;  
+     messageHolder.scrollTop = messageHolder.scrollHeight;
+     
+     messageHolder.onmouseover = function(){
+       messageHolder.style.overflowY = 'scroll';
+     }
+
+     messageHolder.onmouseleave = function(){
+        messageHolder.style.overflowY = 'hidden';
+     }
     });
 
   });

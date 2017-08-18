@@ -1,7 +1,10 @@
 extends layout
 
 block content
-  h1=title
+  nav(class='navbar navbar-light bg-faded')
+    a(class='navbar-brand col-md-5', href='/') Home
+    h1(class='navbar-text') Room: #{title}
+
   div(id='chat-panel', class='panel panel-default')
     div(id= 'message-holder', class= 'panel panel-body')
       ul(id='messages')

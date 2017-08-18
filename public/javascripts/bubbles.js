@@ -47,7 +47,7 @@ $(document).ready(function(){
 
         var pack = d3.pack()
             .size([width, height]);
-        var color = d3.scaleOrdinal(d3.schemeCategory20);
+        var color = d3.scaleOrdinal(d3.schemeCategory20c);
 
         var root = d3.hierarchy(bubblesHierarchy)
             .sum(function(d) { return d.value; })
@@ -89,7 +89,7 @@ $(document).ready(function(){
 
         node.append("text")
             .selectAll("tspan")
-                .data(function(d) {return d.id.split(/(?=[A-Z][^A-Z])/g); })
+                .data(function(d) {return d.id.split(/(?=[A-Za-z ][^A-Za-z ])/g); })
                 .enter().append("tspan")
                     .text(function(d) { return d })
                     .attr("x", 0)
@@ -130,7 +130,7 @@ function getSize(){
 }
 
 function openCreateBubbleDialog(){
-    var test = BootstrapDialog.show({
+    BootstrapDialog.show({
         title: 'Create a bubble',
         id: "create-bubble-modal",
         message: $('<input class="form-control" placeholder="Enter a bubble name..."></input>'),

@@ -21,12 +21,6 @@ h1{
   background-color: black;
 }
 
-#sendBtn{
-  height: 40px;
-  width: 100px;
-  margin: 0;
-}
-
 #chat-panel{
   margin-left: 5%;
   margin-right: 5%;
