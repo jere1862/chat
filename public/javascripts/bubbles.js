@@ -1,5 +1,4 @@
 $(document).ready(function(){
-
     var socket = io();
     const MAX_BUBBLE_RADIUS = 100;
 
@@ -131,7 +130,7 @@ function getSize(){
 }
 
 function openCreateBubbleDialog(){
-    BootstrapDialog.show({
+    var test = BootstrapDialog.show({
         title: 'Create a bubble',
         id: "create-bubble-modal",
         message: $('<input class="form-control" placeholder="Enter a bubble name..."></input>'),
@@ -140,6 +139,13 @@ function openCreateBubbleDialog(){
             input.focus();
             input.keypress(function(e){
                 if(e.which == 13){
+                    if(!inputIsValid(input.val())){
+                        if(!$('#wrong-input-alert').length){
+                            $('<div id="wrong-input-alert" class="alert alert-danger" role="alert">Bubble name is invalid.</div>').insertBefore(input);
+                            return false;
+                        }
+                        return false;
+                    }
                     window.location.href = "/"+input.val();
                     return false;
                 }
@@ -147,3 +153,12 @@ function openCreateBubbleDialog(){
         }
     });        
 }
+
+function inputIsValid(input){
+    var regex = /^.*[a-zA-Z].*[a-zA-Z ]*$/;
+    if(input.length == 0 || input.length > 25){
+        return false;
+    }
+    return regex.test(input);
+}
+
