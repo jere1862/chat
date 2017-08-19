@@ -1,15 +1,17 @@
   var socket = io();
   var username = "";
 
-  //TODO: Align client name to the right for now 
   $(document).ready(function(){
     document.body.style.overflow = 'hidden';
-    //$('#message-holder').style.overflow = 'hidden';
 
     $('input[type=submit]').focus();
     $('#roomName').text(roomName);
 
     socket.emit('chatroom-connection', roomName);
+
+    socket.on("username", function(id){
+      username = id;
+    });
 
     $('#chatForm').submit(function(){  
       if($('#m').val()!=''){
@@ -24,7 +26,13 @@
       if(msg.name == undefined){
         $('#messages').append($('<li>').text(msg))
       }else{
-        $('#messages').append($('<li>').text(msg.name+": " + msg.msg).addClass("alert alert-success modest-message"));
+        var $message = $('<li>');
+        if(msg.name === username){
+          $message.addClass("alert alert-success modest-message");
+        }else{
+          $message.addClass("alert alert-info modest-message");
+        }
+        $('#messages').append($message.text(msg.name+": " + msg.msg));
       }
       $('#messages').append($('<br>'))
 

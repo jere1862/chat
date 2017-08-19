@@ -14,9 +14,11 @@ function User(name, room){
 module.exports = function(io){
   var roomHandler = new RoomHandler();
   io.on('connection', function(socket){
-
+    
     socket.on('chatroom-connection', function(room){
-        connectToRoom(room, function(id){});
+        connectToRoom(room, function(id){
+          socket.emit("username", people[socket.id].name);
+        });
     });
 
     socket.on('chat message', function(msg){
