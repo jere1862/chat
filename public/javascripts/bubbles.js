@@ -18,16 +18,16 @@ $(document).ready(function(){
 
     socket.on("bubblesUpdate", function(res){
         var bubbles = [];
+        bubbles.push({
+            "name": "Create bubble",
+            "type": "createBubble",
+            "value": 2
+        });
         res.forEach(function(bubble){
             bubbles.push({
                 "name": bubble.id,
                 "value": bubble.users.length
             });
-        });
-        bubbles.push({
-            "name": "Create bubble",
-            "type": "createBubble",
-            "value": 1
         });
         bubblesHierarchy.children = bubbles;
         drawSvg()
@@ -89,7 +89,7 @@ $(document).ready(function(){
 
         node.append("text")
             .selectAll("tspan")
-                .data(function(d) {return d.id.split(/(?=[A-Za-z ][^A-Za-z ])/g); })
+                .data(function(d) {return d.id.split(/(?=[A-Za-z0-9 ][^A-Za-z0-9 ])/g); })
                 .enter().append("tspan")
                     .text(function(d) { return d })
                     .attr("x", 0)
@@ -155,7 +155,7 @@ function openCreateBubbleDialog(){
 }
 
 function inputIsValid(input){
-    var regex = /^.*[a-zA-Z].*[a-zA-Z ]*$/;
+    var regex = /^.*[a-zA-Z0-9].*[a-zA-Z0-9 ]*$/;
     if(input.length == 0 || input.length > 25){
         return false;
     }
